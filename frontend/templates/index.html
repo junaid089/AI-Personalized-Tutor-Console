@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Personalized Tutor Console</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <nav class="navbar navbar-dark bg-primary">
+        <div class="container-fluid">
+            <span class="navbar-brand mb-0 h1">🎓 AI Personalized Tutor Console</span>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-4">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-header bg-secondary text-white">
+                        <h5>Navigation</h5>
+                    </div>
+                    <div class="list-group list-group-flush">
+                        <button class="list-group-item list-group-item-action active" data-section="students">
+                            👤 Student Profiles
+                        </button>
+                        <button class="list-group-item list-group-item-action" data-section="practice">
+                            📝 Practice Problems
+                        </button>
+                        <button class="list-group-item list-group-item-action" data-section="progress">
+                            📊 Progress Tracking
+                        </button>
+                        <button class="list-group-item list-group-item-action" data-section="lessons">
+                            📚 Lesson Plans
+                        </button>
+                        <button class="list-group-item list-group-item-action" data-section="diagnostic">
+                            🧪 Diagnostic
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-9">
+                <!-- Students Section -->
+                <div id="students-section" class="content-section">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h4>Student Profiles</h4>
+                        </div>
+                        <div class="card-body">
+                            <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addStudentModal">
+                                + Add New Student
+                            </button>
+                            <div id="students-list" class="row"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Practice Problems Section -->
+                <div id="practice-section" class="content-section" style="display:none;">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h4>Practice Problems</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Topic</label>
+                                    <input type="text" class="form-control" id="practice-topic" placeholder="e.g., Algebra">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Difficulty</label>
+                                    <select class="form-select" id="practice-difficulty">
+                                        <option value="easy">Easy</option>
+                                        <option value="medium" selected>Medium</option>
+                                        <option value="hard">Hard</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Count</label>
+                                    <input type="number" class="form-control" id="practice-count" value="3" min="1" max="10">
+                                </div>
+                            </div>
+                            <button class="btn btn-success" onclick="generateProblems()">Generate Problems</button>
+                            <div id="problems-list" class="mt-4"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Progress Tracking Section -->
+                <div id="progress-section" class="content-section" style="display:none;">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h4>Progress Tracking</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label">Select Student</label>
+                                <select class="form-select" id="progress-student-select"></select>
+                            </div>
+                            <button class="btn btn-primary" onclick="loadProgress()">Load Progress</button>
+                            <div id="progress-display" class="mt-4"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lesson Plans Section -->
+                <div id="lessons-section" class="content-section" style="display:none;">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h4>Lesson Plan Generator</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label">Select Student</label>
+                                <select class="form-select" id="lesson-student-select"></select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Topic</label>
+                                <input type="text" class="form-control" id="lesson-topic" placeholder="e.g., Introduction to Calculus">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Unit Outline (comma-separated)</label>
+                                <input type="text" class="form-control" id="lesson-outline" placeholder="e.g., Limits, Derivatives, Applications">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Session Length (minutes)</label>
+                                <input type="number" class="form-control" id="lesson-duration" value="45" min="15" max="120">
+                            </div>
+                            <button class="btn btn-success" onclick="generateLessonPlan()">Generate Lesson Plan</button>
+                            <div id="lesson-display" class="mt-4"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Diagnostic Section -->
+                <div id="diagnostic-section" class="content-section" style="display:none;">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h4>Diagnostic Assessment</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-md-8">
+                                    <label class="form-label">Topic</label>
+                                    <input type="text" class="form-control" id="diagnostic-topic" placeholder="e.g., Fractions">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Questions</label>
+                                    <input type="number" class="form-control" id="diagnostic-questions" value="5" min="3" max="10">
+                                </div>
+                            </div>
+                            <button class="btn btn-primary" onclick="generateDiagnostic()">Generate Assessment</button>
+                            <div id="diagnostic-display" class="mt-4"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Student Modal -->
+    <div class="modal fade" id="addStudentModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Student</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="student-form">
+                        <div class="mb-3">
+                            <label class="form-label">Name*</label>
+                            <input type="text" class="form-control" id="student-name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Age Group</label>
+                            <input type="text" class="form-control" id="student-age" placeholder="e.g., 10-12">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Grade Level</label>
+                            <input type="text" class="form-control" id="student-grade" placeholder="e.g., 7th Grade">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Learning Style</label>
+                            <select class="form-select" id="student-learning-style">
+                                <option value="visual">Visual</option>
+                                <option value="auditory">Auditory</option>
+                                <option value="kinesthetic">Kinesthetic</option>
+                                <option value="reading">Reading/Writing</option>
+                                <option value="mixed" selected>Mixed</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Learning Pace</label>
+                            <select class="form-select" id="student-pacing">
+                                <option value="slow">Slow</option>
+                                <option value="medium" selected>Medium</option>
+                                <option value="fast">Fast</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Goals</label>
+                            <textarea class="form-control" id="student-goals" rows="2"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="saveStudent()">Save Student</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
